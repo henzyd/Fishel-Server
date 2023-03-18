@@ -20,9 +20,12 @@ async function getAllTopics(req, res) {
 
 async function createTopic(req, res) {
   try {
-    const topic = await Topic.create({});
+    const topic = await Topic.create({
+      topic: req.body.topic,
+      subject: req.body.subject,
+    });
     if (topic) {
-      res.status(200).json({
+      res.status(201).json({
         status: "success",
         data: {
           topic,

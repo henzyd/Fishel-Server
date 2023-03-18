@@ -12,7 +12,7 @@ async function getAllQuestion(req, res) {
       });
     }
   } catch (err) {
-    res.status(500).json({
+    res.status(400).json({
       status: "error",
       message: err.message,
     });
