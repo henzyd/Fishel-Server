@@ -4,49 +4,56 @@ const Schema = mongoose.Schema;
 
 const Subject = mongoose.model(
   "Subject",
-  new Schema({
-    subject: {
-      type: String,
-      required: [true, "Subject is required"],
-      enum: {
-        values: ["Government", "Test"],
-        message:
-          '{VALUE} is not a valid question type. Please choose from "Government", or "Test".',
+  new Schema(
+    {
+      name: {
+        type: String,
+        required: [true, "Subject is required"],
+        enum: {
+          values: ["Government", "Test"],
+          message:
+            '{VALUE} is not a valid question type. Please choose from "Government", or "Test".',
+        },
       },
+      topics: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Topic",
+        },
+      ],
+      questions: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Question",
+        },
+      ],
     },
-    topics: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Topic",
-      },
-    ],
-    questions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Question",
-      },
-    ],
-  })
+    { timestamps: true }
+  )
 );
 
 const Topic = mongoose.model(
   "Topic",
-  new Schema({
-    topic: {
-      type: String,
-      required: [true, "Topic is required"],
-    },
-    subject: {
-      type: Schema.Types.ObjectId,
-      ref: "Subject",
-    },
-    questions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Question",
+  new Schema(
+    {
+      name: {
+        type: String,
+        required: [true, "Topic is required"],
       },
-    ],
-  })
+      subject: {
+        type: Schema.Types.ObjectId,
+        ref: "Subject",
+        required: [true, "subject is required"],
+      },
+      questions: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Question",
+        },
+      ],
+    },
+    { timestamps: true }
+  )
 );
 
 const Question = mongoose.model(
