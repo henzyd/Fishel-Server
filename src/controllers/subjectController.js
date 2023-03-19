@@ -17,7 +17,7 @@ async function getAllSubject(req, res) {
 
 async function createSubject(req, res) {
   try {
-    const subject = await Subject.create({ subject: req.body.subject });
+    const subject = await Subject.create({ name: req.body.name });
     if (subject) {
       return res.status(201).json({
         status: "success",

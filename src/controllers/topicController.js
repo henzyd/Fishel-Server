@@ -2,7 +2,9 @@ const { Topic } = require("../db/models");
 
 async function getAllTopics(req, res) {
   try {
-    const topics = await Topic.find().select("-__v");
+    const topics = await Topic.find()
+      .populate({ path: "subject", select: "name " })
+      .select("-__v");
     res.status(200).json({
       status: "success",
       data: {
@@ -10,7 +12,6 @@ async function getAllTopics(req, res) {
       },
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       status: "error",
       message: err.message,
@@ -21,8 +22,8 @@ async function getAllTopics(req, res) {
 async function createTopic(req, res) {
   try {
     const topic = await Topic.create({
-      topic: req.body.topic,
-      subject: req.body.subject,
+      subject: req.params.subjectId,
+      name: req.body.name,
     });
     if (topic) {
       res.status(201).json({

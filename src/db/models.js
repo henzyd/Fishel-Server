@@ -6,7 +6,7 @@ const Subject = mongoose.model(
   "Subject",
   new Schema(
     {
-      subject: {
+      name: {
         type: String,
         required: [true, "Subject is required"],
         enum: {
@@ -36,13 +36,14 @@ const Topic = mongoose.model(
   "Topic",
   new Schema(
     {
-      topic: {
+      name: {
         type: String,
         required: [true, "Topic is required"],
       },
       subject: {
         type: Schema.Types.ObjectId,
         ref: "Subject",
+        required: [true, "subject is required"],
       },
       questions: [
         {

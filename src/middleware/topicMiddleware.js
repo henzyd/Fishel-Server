@@ -1,6 +1,6 @@
 const { Subject } = require("../db/models");
 
-async function checkSubjectID(req, res, next) {
+async function checkTopicID(req, res, next) {
   /**
    * This middleware is used to check the Subject id being passed in the request exists
    */
@@ -22,4 +22,4 @@ async function checkSubjectID(req, res, next) {
   next();
 }
 
-module.exports = { checkSubjectID };
+module.exports = { checkTopicID };
