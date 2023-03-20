@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 if (process.env.NODE_ENV === "development") {
+  console.log("in development mode");
   mongoose
     .connect(process.env.DEV_DB_CONNECTION_STRING)
     .then(() => {
@@ -10,6 +11,7 @@ if (process.env.NODE_ENV === "development") {
       console.log(error);
     });
 } else {
+  console.log("in production mode");
   mongoose
     .connect(
       process.env.PROD_DB_CONNECTION_STRING.replace(
