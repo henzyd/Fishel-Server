@@ -54,4 +54,24 @@ async function getTopic(req, res) {
   });
 }
 
-module.exports = { getAllTopics, createTopic, getTopic };
+async function updateTopic(req, res) {
+  /**
+   * This controller is responsible for updating a topic
+   */
+
+  const body = req.body;
+
+  try {
+    const topic = await Topic.findByIdAndUpdate(req.params.topicId, body, {
+      new: true,
+      runValidators: true,
+    }).select("-__v");
+    if (topic) {
+      res.status(200).json({ status: "success", data: topic });
+    }
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
+}
+
+module.exports = { getAllTopics, createTopic, getTopic, updateTopic };

@@ -3,6 +3,7 @@ const {
   getAllTopics,
   createTopic,
   getTopic,
+  updateTopic,
 } = require("../controllers/topicController");
 const { checkSubjectID } = require("../middleware/subjectMiddleware");
 const { checkTopicID } = require("../middleware/topicMiddleware");
@@ -16,6 +17,7 @@ router
 
 router
   .route("/:subjectId/topic/:topicId")
-  .get([checkSubjectID, checkTopicID], getTopic);
+  .get([checkSubjectID, checkTopicID], getTopic)
+  .patch([checkSubjectID, checkTopicID], updateTopic);
 
 module.exports = router;
