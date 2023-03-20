@@ -41,4 +41,6 @@ async function createTopic(req, res) {
   }
 }
 
-module.exports = { getAllTopics, createTopic };
+async function getTopic(req, res) {}
+
+module.exports = { getAllTopics, createTopic, getTopic };
