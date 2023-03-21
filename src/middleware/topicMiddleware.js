@@ -18,7 +18,7 @@ async function checkTopicID(req, res, next) {
 
   try {
     const topic = await Topic.findById(topicId)
-      .populate({ path: "subject", select: "name " })
+      .populate({ path: "subject", select: "name" })
       .select("-__v");
     if (!topic) {
       return res.status(404).json({
