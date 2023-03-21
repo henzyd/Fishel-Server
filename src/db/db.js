@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === "development") {
   mongoose
     .connect(process.env.DEV_DB_CONNECTION_STRING)
     .then(() => {
-      console.log("Connected to the database...");
+      console.log(`Connected to the ${process.env.NODE_ENV} database...`);
     })
     .catch((error) => {
       console.log(error);
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "development") {
       )
     )
     .then(() => {
-      console.log("Connected to the database...");
+      console.log(`Connected to the ${process.env.NODE_ENV} database...`);
     })
     .catch((error) => {
       console.log(error);

@@ -74,4 +74,26 @@ async function updateTopic(req, res) {
   }
 }
 
-module.exports = { getAllTopics, createTopic, getTopic, updateTopic };
+async function deleteTopic(req, res) {
+  /**
+   * This controller is responsible for deleting a topic
+   */
+
+  try {
+    await Topic.findByIdAndDelete(req.params.topicId);
+    res.status(204).json({
+      status: "success",
+      message: "Topic deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
+}
+
+module.exports = {
+  getAllTopics,
+  createTopic,
+  getTopic,
+  updateTopic,
+  deleteTopic,
+};
