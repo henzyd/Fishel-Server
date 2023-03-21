@@ -1,22 +1,34 @@
-const { Subject } = require("../db/models");
+const mongoose = require("mongoose");
+const { Topic } = require("../db/models");
+
+const ObjectId = mongoose.Types.ObjectId;
 
 async function checkTopicID(req, res, next) {
   /**
-   * This middleware is used to check the Subject id being passed in the request exists
+   * This middleware is used to check the Topic id being passed in the request exists
    */
 
-  const subjectId = req.body.subject;
-  if (!subjectId) {
-    return res.status(400).json({ status: "fail", message: "invalid subject" });
+  const { topicId } = req.params;
+
+  if (!ObjectId.isValid(topicId)) {
+    return res
+      .status(400)
+      .json({ status: "fail", message: "Invalid ID format" });
   }
 
   try {
-    const subject = await Subject.findById(subjectId);
+    const topic = await Topic.findById(topicId)
+      .populate({ path: "subject", select: "name" })
+      .select("-__v");
+    if (!topic) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Topic not found",
+      });
+    }
+    res.locals.topic = topic;
   } catch (err) {
-    return res.status(404).json({
-      status: "fail",
-      message: "Subject not found",
-    });
+    return next(err);
   }
 
   next();

@@ -89,14 +89,17 @@ const Question = mongoose.model(
       isVerified: {
         type: Boolean,
         required: [true, "Is verified is a required field"],
+        default: false,
       },
       subject: {
         type: Schema.Types.ObjectId,
         ref: "Subject",
+        required: [true, "subject is required"],
       },
       topic: {
         type: Schema.Types.ObjectId,
         ref: "Topic",
+        required: [true, "topic is required"],
       },
     },
     { timestamps: true }
