@@ -1,7 +1,5 @@
-const mongoose = require("mongoose");
 const { Subject } = require("../db/models");
-
-const ObjectId = mongoose.Types.ObjectId;
+const checkID = require("../utils/validateId");
 
 async function checkSubjectID(req, res, next) {
   /**
@@ -10,7 +8,7 @@ async function checkSubjectID(req, res, next) {
 
   const { subjectId } = req.params;
 
-  if (!ObjectId.isValid(subjectId)) {
+  if (!checkID(subjectId)) {
     return res
       .status(400)
       .json({ status: "fail", message: "Invalid ID format" });

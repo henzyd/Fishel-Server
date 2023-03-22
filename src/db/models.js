@@ -9,11 +9,13 @@ const Subject = mongoose.model(
       name: {
         type: String,
         required: [true, "Subject is required"],
-        enum: {
-          values: ["Government", "Test"],
-          message:
-            '{VALUE} is not a valid question type. Please choose from "Government", or "Test".',
-        },
+        // enum: {
+        //   values: ["Government", "Test"],
+        //   message:
+        //     '{VALUE} is not a valid question type. Please choose from "Government", or "Test".',
+        // },
+        unique: true,
+        trim: true,
       },
       topics: [
         {
@@ -39,6 +41,8 @@ const Topic = mongoose.model(
       name: {
         type: String,
         required: [true, "Topic is required"],
+        unique: true,
+        trim: true,
       },
       subject: {
         type: Schema.Types.ObjectId,
@@ -63,18 +67,20 @@ const Question = mongoose.model(
       questionAuthor: {
         type: String,
         required: [true, "Question author is required field"],
+        trim: true,
       },
       questionText: {
         type: String,
         required: [true, "Question text is required field"],
+        trim: true,
       },
       questionType: {
         type: String,
         required: [true, "Question type is required field"],
         enum: {
-          values: ["Objective", "Theory", "Essay"],
+          values: ["Objective", "Theory", "Subjective"],
           message:
-            '{VALUE} is not a valid question type. Please choose from "Objective", "Theory", or "Essay".',
+            '{VALUE} is not a valid question type. Please choose from "Objective", "Theory", or "Subjective".',
         },
       },
       questionLevel: {
@@ -83,7 +89,7 @@ const Question = mongoose.model(
         enum: {
           values: ["Easy", "Medium", "Hard"],
           message:
-            '{VALUE} is not a valid question type. Please choose from "Objective", "Theory", or "Essay".',
+            '{VALUE} is not a valid question type. Please choose from "Easy", "Medium", or "Hard".',
         },
       },
       isVerified: {

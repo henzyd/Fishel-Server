@@ -12,12 +12,12 @@ const { checkTopicID } = require("../middleware/topicMiddleware");
 const router = express.Router();
 
 router
-  .route("/:subjectId/topic")
+  .route("/")
   .get([checkSubjectID], getAllTopics)
   .post([checkSubjectID], createTopic);
 
 router
-  .route("/:subjectId/topic/:topicId")
+  .route("/:topicId")
   .get([checkSubjectID, checkTopicID], getTopic)
   .patch([checkSubjectID, checkTopicID], updateTopic)
   .delete([checkSubjectID, checkTopicID], deleteTopic);

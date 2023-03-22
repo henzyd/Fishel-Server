@@ -18,7 +18,7 @@ app.get(`${baseURL}/`, (req, res) => {
   });
 });
 app.use(`${baseURL}/subject`, subjectRouter);
-app.use(`${baseURL}/subject`, topicRouter);
-app.use(`${baseURL}/subject`, questionRouter);
+app.use(`${baseURL}/topic`, topicRouter);
+app.use(`${baseURL}/question`, questionRouter);
 
 module.exports = app;

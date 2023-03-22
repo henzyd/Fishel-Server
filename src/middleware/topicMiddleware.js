@@ -8,12 +8,16 @@ async function checkTopicID(req, res, next) {
    * This middleware is used to check the Topic id being passed in the request exists
    */
 
-  const { topicId } = req.params;
+  const { topicId } = req.body;
 
-  if (!ObjectId.isValid(topicId)) {
-    return res
-      .status(400)
-      .json({ status: "fail", message: "Invalid ID format" });
+  if (topicId) {
+    if (!ObjectId.isValid(topicId)) {
+      return res
+        .status(400)
+        .json({ status: "fail", message: "Invalid ID format" });
+    }
+  } else {
+    return res.status(400).json({ status: "fail", message: "Topic not found" });
   }
 
   try {
