@@ -1,17 +1,12 @@
 const { Subject } = require("../db/models");
+const Response = require("../utils/response");
 
 async function getAllSubject(req, res) {
   try {
-    const subjects = await Subject.find().select("-__v");
-    res.status(200).json({
-      status: "success",
-      data: { subjects },
-    });
+    const subjects = await Subject.find().select("-__v").populate("topics");
+    return new Response(res).success(subjects);
   } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
+    return new Response(res).serverError(err.message);
   }
 }
 
@@ -19,18 +14,10 @@ async function createSubject(req, res) {
   try {
     const subject = await Subject.create({ name: req.body.name });
     if (subject) {
-      return res.status(201).json({
-        status: "success",
-        data: {
-          subject,
-        },
-      });
+      return new Response(res).created(subject);
     }
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err.message,
-    });
+    return new Response(res).badRequest("Invalid subject data");
   }
 }
 
@@ -39,10 +26,7 @@ async function getSubject(req, res) {
    * This controller is responsible for getting a single subject by its id
    */
 
-  res.status(200).json({
-    status: "success",
-    subject: res.locals.subject,
-  });
+  return new Response(res).success(res.locals.subject);
 }
 
 async function updateSubject(req, res) {
@@ -58,11 +42,9 @@ async function updateSubject(req, res) {
       body,
       { new: true, runValidators: true }
     ).select("-__v");
-    if (subject) {
-      res.status(200).json({ status: "success", data: subject });
-    }
+    return new Response(res).success(subject);
   } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
+    return new Response(res).serverError(err.message);
   }
 }
 
@@ -73,12 +55,9 @@ async function deleteSubject(req, res) {
 
   try {
     await Subject.findByIdAndDelete(req.params.subjectId);
-    res.status(204).json({
-      status: "success",
-      message: "Subject deleted successfully",
-    });
+    return new Response(res).noContent("Subject deleted successfully");
   } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
+    return new Response(res).serverError(err.message);
   }
 }
 

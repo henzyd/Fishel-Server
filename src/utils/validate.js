@@ -13,4 +13,4 @@ function checkID(id) {
   }
 }
 
-module.exports = checkID;
+module.exports = { checkID };

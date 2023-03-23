@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
 const { Topic } = require("../db/models");
-
-const ObjectId = mongoose.Types.ObjectId;
+const Response = require("../utils/response");
+const { checkID } = require("../utils/validate");
 
 async function checkTopicID(req, res, next) {
   /**
@@ -9,26 +8,22 @@ async function checkTopicID(req, res, next) {
    */
 
   const { topicId } = req.body;
+  console.log(topicId);
 
   if (topicId) {
-    if (!ObjectId.isValid(topicId)) {
-      return res
-        .status(400)
-        .json({ status: "fail", message: "Invalid ID format" });
+    if (!checkID(topicId)) {
+      return new Response(res).badRequest("Invalid ID format");
     }
   } else {
-    return res.status(400).json({ status: "fail", message: "Topic not found" });
-  }
+    return new Response(res).badRequest("Topic is required");
+  } //? NOTE: come back to this
 
   try {
     const topic = await Topic.findById(topicId)
       .populate({ path: "subject", select: "name" })
       .select("-__v");
     if (!topic) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Topic not found",
-      });
+      return new Response(res).notFound("Topic not found");
     }
     res.locals.topic = topic;
   } catch (err) {
