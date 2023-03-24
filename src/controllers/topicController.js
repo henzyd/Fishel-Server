@@ -14,15 +14,20 @@ async function getAllTopics(req, res) {
 
 async function createTopic(req, res) {
   try {
-    const topic = await Topic.create({
-      subject: req.body.subjectId,
+    console.log(res.locals.subject);
+    const topic = new Topic({
+      subject: res.locals.subject._id,
       name: req.body.name,
     });
-    if (topic) {
-      return new Response(res).created(topic);
-    }
+    await topic.save();
+    res.locals.subject.topics.push(topic._id);
+    await res.locals.subject.save();
+    // if (topic) {
+    return new Response(res).created(topic);
+    // }
   } catch (err) {
-    return new Response(res).badRequest("invalid topic data");
+    // return new Response(res).badRequest("invalid topic data");
+    return new Response(res).badRequest(err.message);
   }
 }
 

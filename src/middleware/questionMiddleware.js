@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
 const { Question } = require("../db/models");
-
-const ObjectId = mongoose.Types.ObjectId;
+const Response = require("../utils/response");
+const { checkID } = require("../utils/validate");
 
 async function checkQuestionID(req, res, next) {
   /**
@@ -10,10 +9,8 @@ async function checkQuestionID(req, res, next) {
 
   const { questionId } = req.params;
 
-  if (!ObjectId.isValid(questionId)) {
-    return res
-      .status(400)
-      .json({ status: "fail", message: "Invalid ID format" });
+  if (!checkID(questionId)) {
+    return new Response(res).badRequest("Invalid ID format");
   }
 
   try {
@@ -22,10 +19,7 @@ async function checkQuestionID(req, res, next) {
       .populate({ path: "topic", select: "name" })
       .select("-__v");
     if (!question) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Question not found",
-      });
+      return new Response(res).notFound("Question not found");
     }
     res.locals.question = question;
   } catch (err) {

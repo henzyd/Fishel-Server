@@ -7,8 +7,7 @@ async function checkTopicID(req, res, next) {
    * This middleware is used to check the Topic id being passed in the request exists
    */
 
-  const { topicId } = req.body;
-  console.log(topicId);
+  const { topicId } = req.params;
 
   if (topicId) {
     if (!checkID(topicId)) {

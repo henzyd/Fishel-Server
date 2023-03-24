@@ -46,6 +46,7 @@ async function checkBodySubjectID(req, res, next) {
       return new Response(res).notFound("Subject not found");
     }
     res.locals.subject = subject;
+    console.log(res.locals.subject);
   } catch (err) {
     return next(err);
   }
