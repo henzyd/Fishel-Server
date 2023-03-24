@@ -6,20 +6,20 @@ const {
   updateTopic,
   deleteTopic,
 } = require("../controllers/topicController");
-const { checkSubjectID } = require("../middleware/subjectMiddleware");
+const { checkBodySubjectID } = require("../middleware/subjectMiddleware");
 const { checkTopicID } = require("../middleware/topicMiddleware");
 
 const router = express.Router();
 
 router
-  .route("/:subjectId/topic")
-  .get([checkSubjectID], getAllTopics)
-  .post([checkSubjectID], createTopic);
+  .route("/")
+  .get([checkBodySubjectID], getAllTopics)
+  .post([checkBodySubjectID], createTopic);
 
 router
-  .route("/:subjectId/topic/:topicId")
-  .get([checkSubjectID, checkTopicID], getTopic)
-  .patch([checkSubjectID, checkTopicID], updateTopic)
-  .delete([checkSubjectID, checkTopicID], deleteTopic);
+  .route("/:topicId")
+  .get([checkBodySubjectID, checkTopicID], getTopic)
+  .patch([checkBodySubjectID, checkTopicID], updateTopic)
+  .delete([checkBodySubjectID, checkTopicID], deleteTopic);
 
 module.exports = router;

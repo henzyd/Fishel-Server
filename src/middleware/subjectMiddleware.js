@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
 const { Subject } = require("../db/models");
-
-const ObjectId = mongoose.Types.ObjectId;
+const Response = require("../utils/response");
+const { checkID } = require("../utils/validate");
 
 async function checkSubjectID(req, res, next) {
   /**
@@ -10,19 +9,14 @@ async function checkSubjectID(req, res, next) {
 
   const { subjectId } = req.params;
 
-  if (!ObjectId.isValid(subjectId)) {
-    return res
-      .status(400)
-      .json({ status: "fail", message: "Invalid ID format" });
+  if (!checkID(subjectId)) {
+    return new Response(res).badRequest("Invalid ID format");
   }
 
   try {
     const subject = await Subject.findById(subjectId).select("-__v");
     if (!subject) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Subject not found",
-      });
+      return new Response(res).notFound("Subject not found");
     }
     res.locals.subject = subject;
   } catch (err) {
@@ -31,4 +25,32 @@ async function checkSubjectID(req, res, next) {
   next();
 }
 
-module.exports = { checkSubjectID };
+async function checkBodySubjectID(req, res, next) {
+  /**
+   * This middleware is used to check the Subject id being passed in the params exists
+   */
+
+  const { subjectId } = req.body;
+
+  if (!subjectId) {
+    return new Response(res).badRequest("Subject is required");
+  }
+
+  if (!checkID(subjectId)) {
+    return new Response(res).badRequest("Invalid ID format");
+  }
+
+  try {
+    const subject = await Subject.findById(subjectId).select("-__v");
+    if (!subject) {
+      return new Response(res).notFound("Subject not found");
+    }
+    res.locals.subject = subject;
+    console.log(res.locals.subject);
+  } catch (err) {
+    return next(err);
+  }
+  next();
+}
+
+module.exports = { checkSubjectID, checkBodySubjectID };
