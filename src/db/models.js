@@ -23,15 +23,23 @@ const Subject = mongoose.model(
           ref: "Topic",
         },
       ],
-      questions: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Question",
-        },
-      ],
+      // questions: [
+      //   {
+      //     type: Schema.Types.ObjectId,
+      //     ref: "Question",
+      //   },
+      // ],
     },
     { timestamps: true }
-  )
+  ).pre("findOneAndDelete", async function (next) {
+    try {
+      // Use the model to delete all topics with a matching subject
+      await mongoose.model("Topic").deleteMany({ subject: this._id });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  })
 );
 
 const Topic = mongoose.model(
@@ -82,6 +90,7 @@ const Question = mongoose.model(
           message:
             '{VALUE} is not a valid question type. Please choose from "Objective", "Theory", or "Subjective".',
         },
+        default: "Objective",
       },
       questionLevel: {
         type: String,
@@ -91,17 +100,18 @@ const Question = mongoose.model(
           message:
             '{VALUE} is not a valid question type. Please choose from "Easy", "Medium", or "Hard".',
         },
+        default: "Easy",
       },
       isVerified: {
         type: Boolean,
         required: [true, "Is verified is a required field"],
         default: false,
       },
-      subject: {
-        type: Schema.Types.ObjectId,
-        ref: "Subject",
-        required: [true, "subject is required"],
-      },
+      // subject: {
+      //   type: Schema.Types.ObjectId,
+      //   ref: "Subject",
+      //   required: [true, "subject is required"],
+      // },
       topic: {
         type: Schema.Types.ObjectId,
         ref: "Topic",
@@ -112,4 +122,19 @@ const Question = mongoose.model(
   )
 );
 
-module.exports = { Subject, Topic, Question };
+const Option = mongoose.model(
+  "Option",
+  new Schema({
+    optionText: {
+      type: String,
+      required: [true, "Option text is required field"],
+      trim: true,
+    },
+    isCorrect: {
+      type: Boolean,
+      default: false,
+    },
+  })
+);
+
+module.exports = { Subject, Topic, Question, Option };

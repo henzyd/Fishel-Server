@@ -3,8 +3,12 @@ class Response {
     this.res = res;
   }
 
-  success(data) {
-    return this.res.status(200).json({ status: "success", data });
+  success(data, results = null) {
+    if (results) {
+      return this.res.status(200).json({ status: "success", results, data });
+    } else {
+      return this.res.status(200).json({ status: "success", data });
+    }
   }
 
   created(data) {
