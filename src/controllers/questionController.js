@@ -1,4 +1,4 @@
-const { Question } = require("../db/models");
+const { Question, Option } = require("../db/models");
 const Response = require("../utils/response");
 
 async function getAllQuestion(req, res) {
@@ -9,6 +9,7 @@ async function getAllQuestion(req, res) {
   try {
     const questions = await Question.find()
       .populate({ path: "topic", select: "name" })
+      .populate({ path: "options", select: "text isCorrect" })
       .select("-__v");
     if (questions) {
       return new Response(res).success(questions, questions.length);
@@ -29,23 +30,31 @@ async function createQuestion(req, res) {
     questionType,
     questionLevel,
     isVerified,
+    options,
   } = req.body;
 
   try {
-    const question = await Question.create({
+    const question = await Question({
       topic: res.locals.topic._id,
       questionAuthor: questionAuthor,
       questionText: questionText,
       questionType: questionType,
-      questionLevel: questionLevel,
+      questionLevel: questionLevel.toLowerCase(),
       isVerified: isVerified,
     });
-    await question.save();
+    // await question.save();
     res.locals.topic.questions.push(question._id);
+
+    for (const item of options) {
+      item.question = question._id;
+    }
+    const option = await Option.create([...options]);
+    question.options = option;
+
+    const questionObj = await question.save();
     await res.locals.topic.save();
-    // if (question) {
-    return new Response(res).created(question);
-    // }
+
+    return new Response(res).created(questionObj);
   } catch (err) {
     return new Response(res).badRequest(err.message);
   }

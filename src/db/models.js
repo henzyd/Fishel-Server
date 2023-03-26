@@ -96,9 +96,9 @@ const Question = mongoose.model(
         type: String,
         required: [true, "Question level is required field"],
         enum: {
-          values: ["Easy", "Medium", "Hard"],
+          values: ["easy", "medium", "hard"],
           message:
-            '{VALUE} is not a valid question type. Please choose from "Easy", "Medium", or "Hard".',
+            '{VALUE} is not a valid question type. Please choose from "easy", "medium", or "hard".',
         },
         default: "Easy",
       },
@@ -117,6 +117,13 @@ const Question = mongoose.model(
         ref: "Topic",
         required: [true, "topic is required"],
       },
+      options: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Option",
+          required: [true, "Options are required"],
+        },
+      ],
     },
     { timestamps: true }
   )
@@ -125,7 +132,7 @@ const Question = mongoose.model(
 const Option = mongoose.model(
   "Option",
   new Schema({
-    optionText: {
+    text: {
       type: String,
       required: [true, "Option text is required field"],
       trim: true,
@@ -133,6 +140,11 @@ const Option = mongoose.model(
     isCorrect: {
       type: Boolean,
       default: false,
+    },
+    question: {
+      type: Schema.Types.ObjectId,
+      ref: "Question",
+      required: [true, "Question id is required"],
     },
   })
 );
