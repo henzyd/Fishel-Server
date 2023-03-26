@@ -3,7 +3,10 @@ const morgan = require("morgan");
 const subjectRouter = require("./routers/subjectRouter");
 const topicRouter = require("./routers/topicRouter");
 const questionRouter = require("./routers/questionRouter");
-const { getGenerateData } = require("./controllers/generate");
+const {
+  getGenerateData,
+  getQueryQuestions,
+} = require("./controllers/generate");
 
 const app = express();
 
@@ -22,5 +25,6 @@ app.use(`${baseURL}/subject`, subjectRouter);
 app.use(`${baseURL}/topic`, topicRouter);
 app.use(`${baseURL}/question`, questionRouter);
 app.use(`${baseURL}/generate`, getGenerateData);
+app.use(`${baseURL}/generate-questions`, getQueryQuestions);
 
 module.exports = app;

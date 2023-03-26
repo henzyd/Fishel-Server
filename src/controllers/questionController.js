@@ -1,4 +1,5 @@
-const { Question } = require("../db/models");
+const { Question, Option } = require("../db/models");
+const Response = require("../utils/response");
 
 async function getAllQuestion(req, res) {
   /**
@@ -7,22 +8,14 @@ async function getAllQuestion(req, res) {
 
   try {
     const questions = await Question.find()
-      .populate({ path: "subject", select: "name" })
       .populate({ path: "topic", select: "name" })
+      .populate({ path: "options", select: "text isCorrect" })
       .select("-__v");
     if (questions) {
-      res.status(200).json({
-        status: "success",
-        data: {
-          questions,
-        },
-      });
+      return new Response(res).success(questions, questions.length);
     }
   } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
+    return new Response(res).serverError(err.message);
   }
 }
 
@@ -37,31 +30,33 @@ async function createQuestion(req, res) {
     questionType,
     questionLevel,
     isVerified,
+    options,
   } = req.body;
 
   try {
-    const question = await Question.create({
+    const question = await Question({
       topic: res.locals.topic._id,
-      subject: res.locals.subject._id,
       questionAuthor: questionAuthor,
       questionText: questionText,
       questionType: questionType,
-      questionLevel: questionLevel,
+      questionLevel: questionLevel.toLowerCase(),
       isVerified: isVerified,
     });
-    if (question) {
-      return res.status(201).json({
-        status: "success",
-        data: {
-          question,
-        },
-      });
+    // await question.save();
+    res.locals.topic.questions.push(question._id);
+
+    for (const item of options) {
+      item.question = question._id;
     }
+    const option = await Option.create([...options]);
+    question.options = option;
+
+    const questionObj = await question.save();
+    await res.locals.topic.save();
+
+    return new Response(res).created(questionObj);
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err.message,
-    });
+    return new Response(res).badRequest(err.message);
   }
 }
 
@@ -70,12 +65,7 @@ async function getQuestion(req, res) {
    * This controller is responsible for getting a question
    */
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      question: res.locals.question,
-    },
-  });
+  return new Response(res).success(res.locals.question);
 }
 
 module.exports = { getAllQuestion, createQuestion, getQuestion };

@@ -15,7 +15,6 @@ async function checkQuestionID(req, res, next) {
 
   try {
     const question = await Question.findById(questionId)
-      .populate({ path: "subject", select: "name" })
       .populate({ path: "topic", select: "name" })
       .select("-__v");
     if (!question) {

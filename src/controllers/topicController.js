@@ -4,17 +4,22 @@ const Response = require("../utils/response");
 async function getAllTopics(req, res) {
   try {
     const topics = await Topic.find({ subject: res.locals.subject._id })
-      .populate({ path: "subject", select: "name " })
+      .populate({ path: "subject", select: "name" })
       .select("-__v");
-    return new Response(res).success(topics);
+    return new Response(res).success(topics, topics.length);
   } catch (err) {
     return new Response(res).serverError(err.message);
   }
 }
 
 async function createTopic(req, res) {
+  const existingTopic = await Topic.findOne({ name: req.body.name });
+  if (existingTopic) {
+    return new Response(res).badRequest(
+      `Topic with name "${req.body.name}" already exists`
+    );
+  }
   try {
-    console.log(res.locals.subject);
     const topic = new Topic({
       subject: res.locals.subject._id,
       name: req.body.name,
@@ -44,13 +49,20 @@ async function updateTopic(req, res) {
    * This controller is responsible for updating a topic
    */
 
-  const body = req.body;
+  const { name } = req.body;
 
+  console.log(name);
   try {
-    const topic = await Topic.findByIdAndUpdate(req.params.topicId, body, {
-      new: true,
-      runValidators: true,
-    }).select("-__v");
+    const topic = await Topic.findByIdAndUpdate(
+      req.params.topicId,
+      { name },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-__v");
+    console.log(topic);
+
     if (topic) {
       return new Response(res).success(topic);
     }

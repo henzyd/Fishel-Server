@@ -3,14 +3,23 @@ const Response = require("../utils/response");
 
 async function getAllSubject(req, res) {
   try {
-    const subjects = await Subject.find().select("-__v").populate("topics");
-    return new Response(res).success(subjects);
+    const subjects = await Subject.find()
+      .select("-__v")
+      .populate({ path: "topics", select: "name questions" });
+    return new Response(res).success(subjects, subjects.length);
   } catch (err) {
     return new Response(res).serverError(err.message);
   }
 }
 
 async function createSubject(req, res) {
+  const existingSubject = await Subject.findOne({ name: req.body.name });
+  if (existingSubject) {
+    return new Response(res).badRequest(
+      `Subject with name "${req.body.name}" already exists`
+    );
+  }
+
   try {
     const subject = await Subject.create({ name: req.body.name });
     if (subject) {
@@ -34,14 +43,21 @@ async function updateSubject(req, res) {
    * This controller is responsible for updating a subject
    */
 
-  const body = req.body;
+  const { name } = req.body;
 
   try {
     const subject = await Subject.findByIdAndUpdate(
       req.params.subjectId,
-      body,
-      { new: true, runValidators: true }
+      { name },
+      {
+        new: true,
+        runValidators: true,
+      }
     ).select("-__v");
+    console.log(subject);
+    if (!subject) {
+      return new Response(res).notFound("Subject not found");
+    }
     return new Response(res).success(subject);
   } catch (err) {
     return new Response(res).serverError(err.message);

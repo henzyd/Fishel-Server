@@ -14,7 +14,10 @@ async function checkSubjectID(req, res, next) {
   }
 
   try {
-    const subject = await Subject.findById(subjectId).select("-__v");
+    const subject = await Subject.findById(subjectId)
+      .select("-__v")
+      .populate({ path: "topics", select: "-__v -subject" });
+    console.log(subject, "\n subject \n");
     if (!subject) {
       return new Response(res).notFound("Subject not found");
     }
@@ -46,7 +49,6 @@ async function checkBodySubjectID(req, res, next) {
       return new Response(res).notFound("Subject not found");
     }
     res.locals.subject = subject;
-    console.log(res.locals.subject);
   } catch (err) {
     return next(err);
   }
