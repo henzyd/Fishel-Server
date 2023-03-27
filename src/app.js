@@ -7,10 +7,14 @@ const {
   getGenerateData,
   getQueryQuestions,
 } = require("./controllers/generate");
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
 
-app.use(morgan("dev"));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.use(express.json());
 
 const baseURL = ""; //? NOTE: this was `/api`
@@ -26,5 +30,9 @@ app.use(`${baseURL}/topic`, topicRouter);
 app.use(`${baseURL}/question`, questionRouter);
 app.use(`${baseURL}/generate`, getGenerateData);
 app.use(`${baseURL}/generate-questions`, getQueryQuestions);
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+app.use(globalErrorHandler);
 
 module.exports = app;

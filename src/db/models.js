@@ -74,8 +74,14 @@ const Question = mongoose.model(
     {
       questionAuthor: {
         type: String,
-        required: [true, "Question author is required field"],
-        trim: true,
+        // required: [true, "Question author is required field"],
+        // trim: true,
+        validate: {
+          validator: function (value) {
+            return typeof value === "string";
+          },
+          message: "questionAuthor field should be a string",
+        },
       },
       questionText: {
         type: String,
@@ -86,9 +92,9 @@ const Question = mongoose.model(
         type: String,
         required: [true, "Question type is required field"],
         enum: {
-          values: ["Objective", "Theory", "Subjective"],
+          values: ["objective", "theory", "subjective"],
           message:
-            '{VALUE} is not a valid question type. Please choose from "Objective", "Theory", or "Subjective".',
+            '{VALUE} is not a valid question type. Please choose from "objective", "theory", or "subjective".',
         },
         default: "Objective",
       },
@@ -104,7 +110,12 @@ const Question = mongoose.model(
       },
       isVerified: {
         type: Boolean,
-        required: [true, "Is verified is a required field"],
+        validate: [
+          function (value) {
+            return typeof value === "boolean";
+          },
+          "isVerified field should be a boolean value",
+        ],
         default: false,
       },
       // subject: {
@@ -139,6 +150,12 @@ const Option = mongoose.model(
     },
     isCorrect: {
       type: Boolean,
+      validate: {
+        validator: function (value) {
+          return typeof value === "boolean";
+        },
+        message: "isCorrect field should be a boolean value",
+      },
       default: false,
     },
     question: {

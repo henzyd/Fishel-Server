@@ -1,6 +1,44 @@
 const { Question } = require("../db/models");
 const Response = require("../utils/response");
 const { checkID } = require("../utils/validate");
+const AppError = require("../utils/appError");
+
+async function validateQuestion(req, res, next) {
+  /**
+   * This middleware is used to validate the question object being passed in the request
+   */
+
+  const {
+    questionAuthor,
+    questionText,
+    questionType,
+    questionLevel,
+    isVerified,
+    options,
+  } = req.body;
+
+  if (
+    !questionAuthor ||
+    !questionText ||
+    !questionType ||
+    !questionLevel ||
+    !isVerified ||
+    !options
+  ) {
+    next(
+      new AppError(
+        "(questionAuthor, questionText, questionType, questionLevel, isVerified, options) are required",
+        400
+      )
+    );
+  }
+
+  // if (typeof questionAuthor !== "string") {
+  //   next(new AppError("questionAuthor should be a string", 400));
+  // }
+
+  next();
+}
 
 async function checkQuestionID(req, res, next) {
   /**
@@ -22,7 +60,7 @@ async function checkQuestionID(req, res, next) {
     }
     res.locals.question = question;
   } catch (err) {
-    return next(err);
+    next(new AppError(err.message, 500));
   }
 
   next();
