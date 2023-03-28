@@ -1,7 +1,8 @@
 const { Question, Option } = require("../db/models");
 const Response = require("../utils/response");
+const AppError = require("../utils/appError");
 
-async function getAllQuestion(req, res) {
+async function getAllQuestion(req, res, next) {
   /**
    * This controller is responsible for getting all the questions related to the `sujectId` and `topicId`
    */
@@ -15,11 +16,11 @@ async function getAllQuestion(req, res) {
       return new Response(res).success(questions, questions.length);
     }
   } catch (err) {
-    return new Response(res).serverError(err.message);
+    next(new AppError(err.message, 500));
   }
 }
 
-async function createQuestion(req, res) {
+async function createQuestion(req, res, next) {
   /**
    * This controller is responsible for creating a new question
    */
@@ -38,7 +39,7 @@ async function createQuestion(req, res) {
       topic: res.locals.topic._id,
       questionAuthor: questionAuthor,
       questionText: questionText,
-      questionType: questionType,
+      questionType: questionType.toLowerCase(),
       questionLevel: questionLevel.toLowerCase(),
       isVerified: isVerified,
     });
@@ -56,7 +57,7 @@ async function createQuestion(req, res) {
 
     return new Response(res).created(questionObj);
   } catch (err) {
-    return new Response(res).badRequest(err.message);
+    next(new AppError(err.message, 400));
   }
 }
 
@@ -68,4 +69,20 @@ async function getQuestion(req, res) {
   return new Response(res).success(res.locals.question);
 }
 
-module.exports = { getAllQuestion, createQuestion, getQuestion };
+async function updateQuestion(req, res, next) {
+  /**
+   * This controller is responsible for updating a question
+   */
+
+  try {
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
+}
+
+module.exports = {
+  getAllQuestion,
+  createQuestion,
+  getQuestion,
+  updateQuestion,
+};

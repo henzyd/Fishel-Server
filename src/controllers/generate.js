@@ -1,7 +1,8 @@
 const { Subject, Question, Topic } = require("../db/models");
 const Response = require("../utils/response");
+const AppError = require("../utils/appError");
 
-async function getGenerateData(req, res) {
+async function getGenerateData(req, res, next) {
   /**
    * thi controller is responsible for getting the generate data
    */
@@ -58,11 +59,9 @@ async function getGenerateData(req, res) {
       { $sort: { name: 1 } },
     ]);
 
-    console.log(result);
-
     return new Response(res).success(result);
   } catch (err) {
-    return new Response(res).serverError(err.message);
+    next(new AppError(err.message, 500));
   }
 }
 
@@ -117,7 +116,7 @@ async function getQueryQuestions(req, res) {
 
     return new Response(res).success(result, result.length);
   } catch (err) {
-    return new Response(res).serverError(err.message);
+    next(new AppError(err.message, 500));
   }
 }
 
