@@ -5,7 +5,7 @@ class AppError extends Error {
 
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
-    this.isOperational = true;
+    this.isOperational = true; //? NOTE: this is use to tell if the error was cause by an incorrect user(client) operation e.g wrong id, invalid type, etc
 
     Error.captureStackTrace(this, this.constructor); //? NOTE: this is use to remove the constructor from the stack trace
   }
