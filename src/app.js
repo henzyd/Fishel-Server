@@ -1,5 +1,7 @@
 const express = require("express");
+const cors = require("cors");
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 const subjectRouter = require("./routers/subjectRouter");
 const topicRouter = require("./routers/topicRouter");
 const questionRouter = require("./routers/questionRouter");
@@ -15,6 +17,18 @@ const app = express();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+app.use(cors());
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
+app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.json());
 
 const baseURL = ""; //? NOTE: this was `/api`
