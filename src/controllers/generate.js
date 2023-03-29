@@ -70,7 +70,15 @@ async function getQueryQuestions(req, res) {
    * This controller is responsible for getting questions related to the `subject` and `topics` based on the query
    */
 
-  const { subject, topics, difficulty } = req.body;
+  const { subject, topics, difficulty, mode } = req.body;
+
+  let questionMode;
+  questionMode = mode.toLowerCase().trim().replace(" ", "-");
+  console.log(questionMode);
+
+  if (!questionMode === "answer-online" || !questionMode === "print-offline") {
+    return next(new AppError("Invalid question mode", 400));
+  }
 
   try {
     const subjectDoc = await Subject.findOne({ name: subject })
@@ -91,7 +99,13 @@ async function getQueryQuestions(req, res) {
         populate: [
           {
             path: "options",
-            select: "text isCorrect -_id",
+            select: `text ${
+              questionMode === "answer-online"
+                ? ""
+                : questionMode === "print-offline"
+                ? "isCorrect"
+                : ""
+            }`,
           },
           {
             path: "topic",
@@ -111,8 +125,6 @@ async function getQueryQuestions(req, res) {
       totalQuestions: questions.length,
       questions,
     };
-
-    console.log(result);
 
     return new Response(res).success(result, result.length);
   } catch (err) {
