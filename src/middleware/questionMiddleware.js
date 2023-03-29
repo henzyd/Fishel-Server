@@ -25,7 +25,7 @@ async function validateQuestion(req, res, next) {
     !isVerified ||
     !options
   ) {
-    next(
+    return next(
       new AppError(
         "(questionAuthor, questionText, questionType, questionLevel, isVerified, options) are required",
         400
@@ -54,6 +54,7 @@ async function checkQuestionID(req, res, next) {
   try {
     const question = await Question.findById(questionId)
       .populate({ path: "topic", select: "name" })
+      .populate({ path: "options", select: "text isCorrect" })
       .select("-__v");
     if (!question) {
       return new Response(res).notFound("Question not found");
